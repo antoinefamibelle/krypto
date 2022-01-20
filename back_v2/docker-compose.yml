@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:10.3
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+  back:
+    build:
+      context: .
+    entrypoint: npm run start
+    environment:
+      - PORT=8080
+      - DATABASE_PORT="5432"
+      - DATABASE_USER="prisma"
+      - DATABASE_HOST="localhost"
+      - DATABASE_PASSWORD="prisma"
+      - DATABASE_URL="postgresql://prisma:prisma@localhost:5432"
+    ports:
+      - "8000:8000"
+    networks:
+      - api-network
+
+networks:
+  api-network:

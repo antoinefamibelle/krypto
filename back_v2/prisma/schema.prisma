@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  user_email      String   @unique
+  user_first_name String?
+  user_last_name  String?
+  user_password   String
+  user_phone      String?
+  user_username   String?  @unique
+  user_wallet     Krypto[]
+  user_is_active  Boolean  @default(true)
+  user_created_at DateTime @default(now())
+  user_updated_at DateTime @updatedAt
+}
+
+model Krypto {
+  id                   String     @id @default(uuid())
+  user_id              String
+  user                 User       @relation(fields: [user_id], references: [id])
+  krypto_name          String
+  krypto_amount        Float      @default(0)
+  krypto_average_price Float      @default(0)
+  Purchase             Purchase[]
+  krypto_created_at    DateTime   @default(now())
+  krypto_updated_at    DateTime   @updatedAt
+}
+
+model Purchase {
+  id                  String   @id @default(uuid())
+  purchase_date       String
+  purchase_price      Float
+  purchase_amount     Float
+  krypto              Krypto   @relation(fields: [krypto_id], references: [id])
+  krypto_id           String
+  purchase_created_at DateTime @default(now())
+  purchase_updated_at DateTime @updatedAt
+}
